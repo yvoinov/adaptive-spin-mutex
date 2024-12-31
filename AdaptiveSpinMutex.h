@@ -27,7 +27,8 @@ public:
 	}
 
 	void unlock() noexcept {
-		m_lock.store(false, std::memory_order_release);
+		std::unique_lock<std::mutex> tlock(m_conditional_mutex);
+		m_lock.store(false, std::memory_order_relaxed);
 		m_conditional_lock.notify_one();
 	}
 
