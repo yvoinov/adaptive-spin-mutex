@@ -23,7 +23,7 @@ public:
 			m_conditional_lock.wait_for(tlock, std::chrono::nanoseconds(1), [this]() { return !m_lock.load(std::memory_order_relaxed); });
 		}
 
-		m_spin_pred += (v_spin_count - m_spin_pred) >> 3;	/* x >> 3 is eq x / 8 */
+		m_spin_pred.fetch_add((v_spin_count - m_spin_pred.load(std::memory_order_relaxed)) >> 3, std::memory_order_relaxed);	/* x >> 3 is eq x / 8 */
 	}
 
 	void unlock() noexcept {
